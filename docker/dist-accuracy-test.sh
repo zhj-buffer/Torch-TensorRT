@@ -18,4 +18,4 @@ cd /opt/pytorch/torch_tensorrt
 cp /opt/pytorch/torch_tensorrt/docker/WORKSPACE.docker  /opt/pytorch/torch_tensorrt/WORKSPACE
 
 pip install --user --upgrade nox
-nox 
+TOP_DIR=/opt/pytorch/torch_tensorrt nox
