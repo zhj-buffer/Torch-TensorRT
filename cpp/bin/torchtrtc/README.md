@@ -38,6 +38,13 @@ torchtrtc [input_file_path] [output_file_path]
                                         GPU if they are not supported on DLA
       --require-full-compilation        Require that the model should be fully
                                         compiled to TensorRT or throw an error
+      --is-supported=[check-method-op-support],
+      --supported=[check-method-op-support],
+      --check-support=[check-method-op-support],
+      --check-method-op-support=[check-method-op-support]
+                                        Check the support for end to end
+                                        compilation of a specified method in the
+                                        TorchScript module
       --disable-tf32                    Prevent Float32 layers from using the
                                         TF32 data format
       --sparse-weights                  Enable sparsity for weights of conv and
@@ -88,8 +95,6 @@ torchtrtc [input_file_path] [output_file_path]
                                         used to select kernels
       --workspace-size=[workspace_size] Maximum size of workspace given to
                                         TensorRT
-      --max-batch-size=[max_batch_size] Maximum batch size (must be >= 1 to be
-                                        set, 0 means not set)
       -t[threshold],
       --threshold=[threshold]           Maximum acceptable numerical deviation
                                         from standard torchscript output
@@ -116,7 +121,8 @@ torchtrtc [input_file_path] [output_file_path]
                                         followed by format to the end of the
                                         shape spec. e.g. "(3, 3, 32,
                                         32)@f16%NHWC"
-
+      "--" can be used to terminate flag options and force all following
+      arguments to be treated as positional options
 ```
 
 e.g.
