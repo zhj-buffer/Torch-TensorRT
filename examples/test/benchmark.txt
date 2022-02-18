@@ -1,0 +1,83 @@
+xavier@xavier:/mnt/sd/Torch-TensorRT$ python3 test_ssd.py
+Using cache found in /home/xavier/.cache/torch/hub/pytorch_vision_v0.11.1 
+Number of classes in ImageNet: 1000 
+./data/img0.JPG - Predicted: ['n02110185', 'Siberian_husky'], Probablility: 0.4929596781730652 
+./data/img1.JPG - Predicted: ['n01820546', 'lorikeet'], Probablility: 0.6450406312942505 
+./data/img2.JPG - Predicted: ['n02481823', 'chimpanzee'], Probablility: 0.9903154969215393 
+./data/img3.JPG - Predicted: ['n01749939', 'green_mamba'], Probablility: 0.3666543960571289 
+Warm up ... 
+Start timing ... 
+Iteration 10/100, ave batch time 968.24 ms 
+Iteration 20/100, ave batch time 968.62 ms 
+Iteration 30/100, ave batch time 969.62 ms 
+Iteration 40/100, ave batch time 969.80 ms 
+Iteration 50/100, ave batch time 969.62 ms 
+Iteration 60/100, ave batch time 969.70 ms 
+Iteration 70/100, ave batch time 969.89 ms 
+Iteration 80/100, ave batch time 969.97 ms 
+Iteration 90/100, ave batch time 970.06 ms 
+Iteration 100/100, ave batch time 970.00 ms 
+Input shape: torch.Size([128, 3, 224, 224]) 
+Output features size: torch.Size([128, 1000])
+Average batch time: 970.00 ms
+Warm up ... 
+Start timing ... 
+Iteration 10/100, ave batch time 965.97 ms 
+Iteration 20/100, ave batch time 965.36 ms 
+Iteration 30/100, ave batch time 965.40 ms 
+Iteration 40/100, ave batch time 965.47 ms 
+Iteration 50/100, ave batch time 965.19 ms 
+Iteration 60/100, ave batch time 964.98 ms 
+Iteration 70/100, ave batch time 965.02 ms 
+Iteration 80/100, ave batch time 965.11 ms 
+Iteration 90/100, ave batch time 964.96 ms 
+Iteration 100/100, ave batch time 964.78 ms 
+Input shape: torch.Size([128, 3, 224, 224])
+Output features size: torch.Size([128, 1000]) 
+Average batch time: 964.78 ms
+WARNING: [Torch-TensorRT] - Dilation not used in Max pooling converter 
+WARNING: [Torch-TensorRT TorchScript Conversion Context] - Detected invalid timing cache, setup a local cache instead 
+Warm up ... 
+Start timing ... 
+Iteration 10/100, ave batch time 736.50 ms 
+Iteration 20/100, ave batch time 736.41 ms 
+Iteration 30/100, ave batch time 736.78 ms 
+Iteration 40/100, ave batch time 736.72 ms 
+Iteration 50/100, ave batch time 736.36 ms 
+Iteration 60/100, ave batch time 736.33 ms 
+Iteration 70/100, ave batch time 736.16 ms 
+Iteration 80/100, ave batch time 736.20 ms 
+Iteration 90/100, ave batch time 736.28 ms 
+Iteration 100/100, ave batch time 736.28 ms 
+Input shape: torch.Size([128, 3, 224, 224]) 
+Output features size: torch.Size([128, 1000])
+Average batch time: 736.28 ms
+WARNING: [Torch-TensorRT] - For input x.1, found user specified input dtype as Float16, however when inspecting the graph, the input type expected was inferred to be Float 
+The compiler is going to use the user setting Float16
+This conflict may cause an error at runtime due to partial compilation being enabled and therefore
+compatibility with PyTorch's data type convention is required.
+If you do indeed see errors at runtime either:
+- Remove the dtype spec for x.1
+- Disable partial compilation by setting require_full_compilation to True
+WARNING: [Torch-TensorRT TorchScript Conversion Context] - The logger passed into createInferBuilder differs from one already provided for an existing builder, runtime, or refitter. TensorRT maintains only a single logger pointer at any given time, so the existing value, which can be retrieved with getLogger(), will be used instead. In order to use a new logger, first destroy all existing builder, runner or refitter objects.
+
+WARNING: [Torch-TensorRT] - Dilation not used in Max pooling converter 
+WARNING: [Torch-TensorRT] - Detected invalid timing cache, setup a local cache instead 
+Warm up ... 
+Start timing ... 
+Iteration 10/100, ave batch time 164.02 ms 
+Iteration 20/100, ave batch time 164.57 ms 
+Iteration 30/100, ave batch time 164.53 ms 
+Iteration 40/100, ave batch time 164.46 ms 
+Iteration 50/100, ave batch time 164.43 ms 
+Iteration 60/100, ave batch time 164.32 ms 
+Iteration 70/100, ave batch time 164.50 ms 
+Iteration 80/100, ave batch time 164.71 ms 
+Iteration 90/100, ave batch time 164.74 ms 
+Iteration 100/100, ave batch time 164.71 ms 
+Input shape: torch.Size([128, 3, 224, 224]) 
+Output features size: torch.Size([128, 1000])
+Average batch time: 164.71 ms
+
+
+
