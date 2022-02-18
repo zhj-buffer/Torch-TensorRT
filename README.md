@@ -91,15 +91,11 @@ These are the following dependencies used to verify the testcases. Torch-TensorR
 - cuDNN 8.2.1.32-1+cuda10.2
 - TensorRT 8.0.1.6-1+cuda10.2 ( on Jetson)
 
-## Prebuilt Binaries and Wheel files
-
-Releases: https://github.com/NVIDIA/Torch-TensorRT/releases
-
 ## Compiling Torch-TensorRT
 
 ### Installing Dependencies
 
-#### 0. Install Bazel
+#### 0. Install Bazel or Using the precompiled binary under tools
 
 If you don't have bazel installed, the easiest way is to install bazelisk using the method of you choosing https://github.com/bazelbuild/bazelisk
 
