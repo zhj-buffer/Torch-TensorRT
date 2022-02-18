@@ -12,28 +12,6 @@ More Information / System Architecture:
 
 
 
-## Building a docker container for Torch-TensorRT
-
-We provide a `Dockerfile` in `docker/` directory. It expects a PyTorch NGC container as a base but can easily be modified to build on top of any container that provides, PyTorch, CUDA, cuDNN and TensorRT. The dependency libraries in the container can be found in the <a href="https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/index.html">release notes</a>.
-
-Please follow this instruction to build a Docker container.
-
-```bash
-docker build --build-arg BASE=<CONTAINER VERSION e.g. 21.11> -f docker/Dockerfile -t torch_tensorrt:latest .
-```
-
-In the case of building on top of a custom base container, you first must determine the
-version of the PyTorch C++ ABI. If your source of PyTorch is pytorch.org, likely this is the pre-cxx11-abi in which case you must modify `//docker/dist-build.sh` to not build the
-C++11 ABI version of Torch-TensorRT.
-
-You can then build the container using:
-
-
-```bash
-docker build --build-arg BASE_IMG=<IMAGE> -f docker/Dockerfile -t torch_tensorrt:latest .
-```
-
-If you would like to build outside a docker container, please follow the section [Compiling Torch-TensorRT](#compiling-torch-tensorrt)
 
 ## Example Usage
 
@@ -108,10 +86,10 @@ torch.jit.save(trt_ts_module, "trt_torchscript_module.ts") # save the TRT embedd
 These are the following dependencies used to verify the testcases. Torch-TensorRT can work with other versions, but the tests are not guaranteed to pass.
 
 - Bazel 4.2.1
-- Libtorch 1.10.0 (built with CUDA 11.3)
-- CUDA 11.3 (10.2 on Jetson)
-- cuDNN 8.2
-- TensorRT 8.0.3.4 (TensorRT 8.0.1.6 on Jetson)
+- Libtorch 1.10.0 (built with CUDA 10.2)
+- CUDA 10.2 (10.2 on Jetson)
+- cuDNN 8.2.1.32-1+cuda10.2
+- TensorRT 8.0.1.6-1+cuda10.2 ( on Jetson)
 
 ## Prebuilt Binaries and Wheel files
 
@@ -141,23 +119,7 @@ bash ./compile.sh
 You need to start by having CUDA installed on the system, LibTorch will automatically be pulled for you by bazel,
 then you have two options.
 
-#### 1. Building using cuDNN & TensorRT tarball distributions
-
-> This is recommended so as to build Torch-TensorRT hermetically and insures any bugs are not caused by version issues
-
-> Make sure when running Torch-TensorRT that these versions of the libraries are prioritized in your `$LD_LIBRARY_PATH`
-
-1. You need to download the tarball distributions of TensorRT and cuDNN from the NVIDIA website.
-   - https://developer.nvidia.com/cudnn
-   - https://developer.nvidia.com/tensorrt
-2. Place these files in a directory (the directories `third_party/dist_dir/[x86_64-linux-gnu | aarch64-linux-gnu]` exist for this purpose)
-3. Compile using:
-
-``` shell
-bazel build //:libtorchtrt --compilation_mode opt --distdir third_party/dist_dir/[x86_64-linux-gnu | aarch64-linux-gnu]
-```
-
-#### 2. Building using locally installed cuDNN & TensorRT
+#### 1. Building using locally installed cuDNN & TensorRT
 
 > If you find bugs and you compiled using this method please disclose you used this method in the issue
 > (an `ldd` dump would be nice too)
@@ -203,18 +165,20 @@ new_local_repository(
 )
 ```
 
-3. Compile using:
-
+3. Compile tools:
 ``` shell
-bazel build //:libtorchtrt --compilation_mode opt
+sudo cp /tools/bazel /usr/bin/
+sudo apt install openjdk-11-jdk -y
 ```
-
-### Debug build
-
+4. Dependency：
+Refer to https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-10-now-available/72048
 ``` shell
-bazel build //:libtorchtrt --compilation_mode=dbg
-```
+wget https://nvidia.box.com/shared/static/fjtbno0vpo676a25cgvuqc1wty0fkkg6.whl -O torch-1.10.0-cp36-cp36m-linux_aarch64.whl
+sudo apt-get install python3-pip libopenblas-base libopenmpi-dev 
+pip3 install Cython numy
+pip3 install torch-1.10.0-cp36-cp36m-linux_aarch64.whl
 
+```
 ### Native compilation on NVIDIA Jetson AGX
 We performed end to end testing on Jetson platform using Jetpack SDK 4.6.
 
@@ -222,30 +186,37 @@ We performed end to end testing on Jetson platform using Jetpack SDK 4.6.
 bazel build //:libtorchtrt --platforms //toolchains:jetpack_4.6
 ```
 
+### Debug build
+
+``` shell
+bazel build //:libtorchtrt --compilation_mode=dbg  --platforms //toolchains:jetpack_4.6
+```
+
+### Debug build
+
+``` shell
+cd py
+python3 setup.py install --use-cxx11-abi
+```
+
+### Test with Python3
+
+``` shell
+cd ..
+❯ torchtrtc -p f16 lenet_scripted.ts trt_lenet_scripted.ts "(1,1,32,32)"
+
+❯ python3
+Python 3.6.9 (default, Apr 18 2020, 01:56:04)
+[GCC 8.4.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import torch
+>>> import torch_tensorrt
+>>> ts_model = torch.jit.load(“trt_lenet_scripted.ts”)
+>>> ts_model(torch.randn((1,1,32,32)).to(“cuda”).half())
+```
 > Note: Please refer [installation](docs/tutorials/installation.html) instructions for Pre-requisites
 
 A tarball with the include files and library can then be found in bazel-bin
-
-### Running Torch-TensorRT on a JIT Graph
-
-> Make sure to add LibTorch to your LD_LIBRARY_PATH <br>
-> `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/bazel-Torch-TensorRT/external/libtorch/lib`
-
-``` shell
-bazel run //cpp/bin/torchtrtc -- $(realpath <PATH TO GRAPH>) out.ts <input-size>
-```
-
-## Compiling the Python Package
-
-To compile the python package for your local machine, just run `python3 setup.py install` in the `//py` directory.
-To build wheel files for different python versions, first build the Dockerfile in ``//py`` then run the following
-command
-
-```
-docker run -it -v$(pwd)/..:/workspace/Torch-TensorRT build_torch_tensorrt_wheel /bin/bash /workspace/Torch-TensorRT/py/build_whl.sh
-```
-
-Python compilation expects using the tarball based compilation strategy from above.
 
 ## How do I add support for a new op...
 
