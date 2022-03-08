@@ -171,7 +171,7 @@ Refer to https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-10-n
 ``` shell
 wget https://nvidia.box.com/shared/static/fjtbno0vpo676a25cgvuqc1wty0fkkg6.whl -O torch-1.10.0-cp36-cp36m-linux_aarch64.whl
 sudo apt-get install python3-pip libopenblas-base libopenmpi-dev 
-pip3 install Cython numy
+pip3 install Cython numpy
 pip3 install torch-1.10.0-cp36-cp36m-linux_aarch64.whl
 
 sudo apt-get install libjpeg-dev zlib1g-dev libpython3-dev libavcodec-dev libavformat-dev libswscale-dev
